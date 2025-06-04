@@ -17,19 +17,31 @@ const port = 3000
 app.set('view engine', 'ejs')
 app.set('views', path.join(__dirname, 'views'))
 
+app.use(express.urlencoded({ extended: true }))
+
 app.get('/', (req, res) => {
-    res.render('home')
+    res.redirect('/campgrounds')
 })
 
 app.get('/campgrounds', async (req, res) => {
     const campgrounds = await Campground.find({})
-    res.render('campground/index', { campgrounds })
+    res.render('campgrounds/index', { campgrounds })
+})
+
+app.post('/campgrounds', async (req, res) => {
+    const newCampground = new Campground(req.body.campground)
+    await newCampground.save()
+    res.redirect(`/campgrounds/${newCampground._id}`)
+})
+
+app.get('/campgrounds/new', (req, res) => {
+    res.render('campgrounds/new')
 })
 
 app.get('/campgrounds/:id', async (req, res) => {
     const { id } = req.params
     const campground = await Campground.findById(id)
-    res.render('campground/show', { campground })
+    res.render('campgrounds/show', { campground })
 })
 
 app.listen(port, () => {
