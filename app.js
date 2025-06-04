@@ -1,6 +1,7 @@
 const express = require('express')
 const path = require('path')
 const mongoose = require('mongoose')
+const ejsMate = require('ejs-mate')
 const Campground = require('./models/campground')
 const methodOverride = require('method-override')
 
@@ -15,6 +16,7 @@ dbCon.once('open', () => {
 const app = express()
 const port = 3000
 
+app.engine('ejs', ejsMate)
 app.set('view engine', 'ejs')
 app.set('views', path.join(__dirname, 'views'))
 
