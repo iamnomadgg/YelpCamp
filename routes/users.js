@@ -1,5 +1,6 @@
 const express = require('express')
 const router = express.Router()
+const passport = require('passport')
 const ExpressError = require('../utils/ExpressError')
 const User = require('../models/user')
 const { userSchema } = require('../schemas.js')
@@ -32,6 +33,20 @@ router.post('/register', async (req, res) => {
         req.flash('error', e.message)
         res.redirect('/register')
     }
+})
+
+router.get('/login', (req, res) => {
+    res.render('users/login')
+})
+
+router.post('/login', passport.authenticate('local', { failureFlash: true, failureRedirect: '/login' }), (req, res) => {
+    req.flash('success', 'Welcome Back!')
+    res.redirect('/campgrounds')
+
+
+    // const { username, password } = req.body
+    // const user = new User({ username, password })
+    // res.send('POST LOGIN')
 })
 
 module.exports = router
