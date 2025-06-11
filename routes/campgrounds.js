@@ -3,6 +3,8 @@ const router = express.Router()
 const ExpressError = require('../utils/ExpressError')
 const Campground = require('../models/campground')
 const { campgroundSchema } = require('../schemas.js')
+const { isLoggedIn } = require('../middleware.js')
+
 
 const validateCampground = (req, res, next) => {
     const { error } = campgroundSchema.validate(req.body)
@@ -21,14 +23,14 @@ router.get('/', async (req, res) => {
     res.render('campgrounds/index', { campgrounds })
 })
 
-router.post('/', validateCampground, async (req, res) => {
+router.post('/', isLoggedIn, validateCampground, async (req, res) => {
     const newCampground = new Campground(req.body.campground)
     await newCampground.save()
     req.flash('success', 'Successfully created a new campground!')
     res.redirect(`/campgrounds/${newCampground._id}`)
 })
 
-router.get('/new', (req, res) => {
+router.get('/new', isLoggedIn, (req, res) => {
     res.render('campgrounds/new')
 })
 
@@ -42,7 +44,7 @@ router.get('/:id', async (req, res) => {
     res.render('campgrounds/show', { campground })
 })
 
-router.get('/:id/edit', async (req, res) => {
+router.get('/:id/edit', isLoggedIn, async (req, res) => {
     const { id } = req.params
     const campground = await Campground.findById(id)
     if (!campground) {
@@ -52,14 +54,14 @@ router.get('/:id/edit', async (req, res) => {
     res.render('campgrounds/edit', { campground })
 })
 
-router.put('/:id', validateCampground, async (req, res) => {
+router.put('/:id', isLoggedIn, validateCampground, async (req, res) => {
     const { id } = req.params
     await Campground.findByIdAndUpdate(id, { ...req.body.campground })
     req.flash('success', 'Successfully updated campground')
     res.redirect(`/campgrounds/${id}`)
 })
 
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', isLoggedIn, async (req, res) => {
     const { id } = req.params
     await Campground.findByIdAndDelete(id)
     req.flash('success', 'Campground deleted!')
