@@ -21,12 +21,17 @@ router.get('/register', (req, res) => {
 })
 
 router.post('/register', async (req, res) => {
-    const { email, username, password } = req.body
-    const user = new User({ email, username })
-    const registeredUser = await User.register(user, password)
-    console.log(registeredUser)
-    req.flash('success', 'Welcome to YelpCamp!')
-    res.redirect('/campgrounds')
+    try {
+        const { email, username, password } = req.body
+        const user = new User({ email, username })
+        const registeredUser = await User.register(user, password)
+        req.flash('success', 'Welcome to YelpCamp!')
+        res.redirect('/campgrounds')
+
+    } catch (e) {
+        req.flash('error', e.message)
+        res.redirect('/register')
+    }
 })
 
 module.exports = router
