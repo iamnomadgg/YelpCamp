@@ -52,18 +52,32 @@ router.get('/:id/edit', isLoggedIn, async (req, res) => {
         req.flash('error', `No campground found with ID: ${id}`)
         return res.redirect('/campgrounds')
     }
+    if (!req.user || !campground.author.equals(req.user._id)) {
+        req.flash('error', 'You do not have permission to do that')
+        return res.redirect(`/campgrounds/${id}`)
+    }
     res.render('campgrounds/edit', { campground })
 })
 
 router.put('/:id', isLoggedIn, validateCampground, async (req, res) => {
     const { id } = req.params
+    const campground = await Campground.findById(id)
+    if (!req.user || !campground.author.equals(req.user._id)) {
+        req.flash('error', 'You do not have permission to do that')
+        return res.redirect(`/campgrounds/${id}`)
+    }
     await Campground.findByIdAndUpdate(id, { ...req.body.campground })
     req.flash('success', 'Successfully updated campground')
-    res.redirect(`/campgrounds/${id}`)
+    return res.redirect(`/campgrounds/${id}`)
 })
 
 router.delete('/:id', isLoggedIn, async (req, res) => {
     const { id } = req.params
+    const campground = await Campground.findById(id)
+    if (!req.user || !campground.author.equals(req.user._id)) {
+        req.flash('error', 'You do not have permission to do that')
+        return res.redirect(`/campgrounds/${id}`)
+    }
     await Campground.findByIdAndDelete(id)
     req.flash('success', 'Campground deleted!')
     res.redirect('/campgrounds')
