@@ -1,23 +1,7 @@
 const express = require('express')
 const router = express.Router()
-const ExpressError = require('../utils/ExpressError')
 const Campground = require('../models/campground')
-const { campgroundSchema } = require('../schemas.js')
-const { isLoggedIn, isAuthor } = require('../middleware.js')
-
-const validateCampground = (req, res, next) => {
-    const { error } = campgroundSchema.validate(req.body)
-
-    if (error) {
-        const msg = error.details.map(el => el.message).join(',')
-        throw new ExpressError(msg, 400)
-    }
-    else {
-        next()
-    }
-}
-
-
+const { isLoggedIn, isAuthor, validateCampground } = require('../middleware.js')
 
 router.get('/', async (req, res) => {
     const campgrounds = await Campground.find({})
