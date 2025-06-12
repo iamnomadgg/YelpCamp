@@ -5,3 +5,10 @@ module.exports.isLoggedIn = (req, res, next) => {
     }
     next()
 }
+
+module.exports.moveLastPageInfoToLocals = (req, res, next) => {
+    if (req.session.lastPageInfo) {
+        res.locals.lastPageInfo = req.session.lastPageInfo;
+    }
+    next();
+}
