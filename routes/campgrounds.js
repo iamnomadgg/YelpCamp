@@ -25,6 +25,7 @@ router.get('/', async (req, res) => {
 
 router.post('/', isLoggedIn, validateCampground, async (req, res) => {
     const newCampground = new Campground(req.body.campground)
+    newCampground.author = req.user._id
     await newCampground.save()
     req.flash('success', 'Successfully created a new campground!')
     res.redirect(`/campgrounds/${newCampground._id}`)
@@ -36,7 +37,7 @@ router.get('/new', isLoggedIn, (req, res) => {
 
 router.get('/:id', async (req, res) => {
     const { id } = req.params
-    const campground = await Campground.findById(id).populate('reviews')
+    const campground = await Campground.findById(id).populate('reviews').populate('author')
     if (!campground) {
         req.flash('error', `No campground found with ID: ${id}`)
         return res.redirect('/campgrounds')
