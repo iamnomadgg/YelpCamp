@@ -44,10 +44,8 @@ router.get('/login', (req, res) => {
 
 router.post('/login', moveLastPageInfoToLocals, passport.authenticate('local', { failureFlash: true, failureRedirect: '/login' }), (req, res) => {
     req.flash('success', 'Welcome Back!')
-    console.log(`Last Page Before Login POST: ${res.locals.lastPageInfo}`)
     const redirectUrl = res.locals.lastPageInfo || '/campgrounds'
     delete res.locals.lastPageInfo
-    delete req.session.lastPageInfo
     res.redirect(redirectUrl)
 })
 

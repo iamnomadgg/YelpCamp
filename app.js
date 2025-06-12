@@ -56,7 +56,6 @@ app.use((req, res, next) => {
     if (!['/login', '/register', '/'].includes(req.originalUrl)) {
         req.session.lastPageInfo = req.originalUrl
     }
-    console.log(`App.js:app.use() - LastPage: ${req.session.lastPageInfo}`)
     res.locals.currentUser = req.user
     res.locals.success = req.flash('success')
     res.locals.error = req.flash('error')
