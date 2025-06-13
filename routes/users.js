@@ -1,60 +1,20 @@
 const express = require('express')
 const router = express.Router()
 const passport = require('passport')
-const ExpressError = require('../utils/ExpressError')
-const User = require('../models/user')
-const { userSchema } = require('../schemas.js')
 const { moveLastPageInfoToLocals } = require('../middleware.js')
+const users = require('../controllers/users.js')
 
-const validateUser = (req, res, next) => {
-    const { error } = userSchema.validate(req.body)
+router.get('/register', users.renderRegisterForm)
 
-    if (error) {
-        const msg = error.details.map(el => el.message).join(',')
-        throw new ExpressError(msg, 400)
-    }
-    else {
-        next()
-    }
-}
+router.post('/register', users.registerUser)
 
-router.get('/register', (req, res) => {
-    res.render('users/register')
-})
+router.get('/login', users.renderLoginForm)
 
-router.post('/register', async (req, res, next) => {
-    try {
-        const { email, username, password } = req.body
-        const user = new User({ email, username })
-        const registeredUser = await User.register(user, password)
-        req.login(registeredUser, err => {
-            if (err) return next(err)
-            req.flash('success', 'Welcome to YelpCamp!')
-            res.redirect('/campgrounds')
-        })
-    } catch (e) {
-        req.flash('error', e.message)
-        res.redirect('/register')
-    }
-})
+router.post('/login',
+    moveLastPageInfoToLocals,
+    passport.authenticate('local', { failureFlash: true, failureRedirect: '/login' }),
+    users.redirectAfterLogin)
 
-router.get('/login', (req, res) => {
-    res.render('users/login')
-})
-
-router.post('/login', moveLastPageInfoToLocals, passport.authenticate('local', { failureFlash: true, failureRedirect: '/login' }), (req, res) => {
-    req.flash('success', 'Welcome Back!')
-    const redirectUrl = res.locals.lastPageInfo || '/campgrounds'
-    delete res.locals.lastPageInfo
-    res.redirect(redirectUrl)
-})
-
-router.get('/logout', (req, res, next) => {
-    req.logout(err => {
-        if (err) return next(err)
-        req.flash('success', 'Goodbye!')
-        res.redirect('/campgrounds')
-    })
-})
+router.get('/logout', users.logoutUser)
 
 module.exports = router
