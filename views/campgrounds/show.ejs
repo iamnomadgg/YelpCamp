@@ -99,6 +99,7 @@
 </div>
 
 <script>
-    const mbxToken = '<%= process.env.MAPBOX_TOKEN %>'
+    const mbxToken = '<%- process.env.MAPBOX_TOKEN %>'
+    const campground = <%- JSON.stringify(campground) %>
 </script>
 <script src="/javascripts/showPageMap.js"></script>
