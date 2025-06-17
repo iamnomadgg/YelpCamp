@@ -27,7 +27,6 @@ module.exports.createCampground = async (req, res) => {
     newCampground.author = req.user._id
     newCampground.geometry = geoData.body.features[0].geometry
     await newCampground.save()
-    console.log(newCampground)
 
     req.flash('success', 'Successfully created a new campground!')
     res.redirect(`/campgrounds/${newCampground._id}`)
