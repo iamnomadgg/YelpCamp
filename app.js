@@ -11,6 +11,7 @@ const methodOverride = require('method-override')
 const session = require('express-session')
 const flash = require('connect-flash')
 const passport = require('passport')
+const sanitizeV5 = require('./utils/mongoSanitizeV5.js')
 const LocalStrategy = require('passport-local')
 const User = require('./models/user')
 
@@ -32,10 +33,12 @@ const port = 3000
 app.engine('ejs', ejsMate)
 app.set('view engine', 'ejs')
 app.set('views', path.join(__dirname, 'views'))
+app.set('query parser', 'extended')
 
 app.use(express.urlencoded({ extended: true }))
 app.use(methodOverride('_method'))
 app.use(express.static(path.join(__dirname, 'public')))
+app.use(sanitizeV5({ replaceWith: '_' }))
 
 const sessionConfig = {
     secret: 'thisshouldbeabettersecret!',
@@ -57,6 +60,7 @@ passport.serializeUser(User.serializeUser())
 passport.deserializeUser(User.deserializeUser())
 
 app.use((req, res, next) => {
+    console.log(req.query)
     if (!['/login', '/register', '/'].includes(req.originalUrl)) {
         req.session.lastPageInfo = req.originalUrl
     }
