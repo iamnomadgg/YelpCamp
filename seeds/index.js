@@ -24,7 +24,10 @@ const seedDB = async () => {
             location: `${cities[randomNum].city}, ${cities[randomNum].state}`,
             geometry: {
                 type: 'Point',
-                coordinates: [28.99706, 41.070274]
+                coordinates: [
+                    cities[randomNum].longitude,
+                    cities[randomNum].latitude
+                ]
             },
             description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Et quo accusamus quam fuga consectetur, neque praesentium ipsam. Corrupti perferendis facilis temporibus esse! Maxime, laudantium. Consequatur ab dicta eius labore tenetur.',
             price,
