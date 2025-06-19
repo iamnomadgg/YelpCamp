@@ -21,6 +21,7 @@ const reviewRoutes = require('./routes/reviews')
 const userRoutes = require('./routes/users')
 
 mongoose.connect('mongodb://localhost:27017/yelp-camp')
+// mongoose.connect(process.env.DB_URL)
 
 const dbCon = mongoose.connection
 dbCon.on('error', console.error.bind(console, 'connection error: '))
