@@ -60,7 +60,6 @@ passport.serializeUser(User.serializeUser())
 passport.deserializeUser(User.deserializeUser())
 
 app.use((req, res, next) => {
-    console.log(req.query)
     if (!['/login', '/register', '/'].includes(req.originalUrl)) {
         req.session.lastPageInfo = req.originalUrl
     }
