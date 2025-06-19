@@ -8,14 +8,14 @@ const upload = multer({ storage })
 
 router.route('/')
     .get(campgrounds.index)
-    .post(isLoggedIn, validateCampground, upload.array('image'), campgrounds.createCampground)
+    .post(isLoggedIn, upload.array('image'), validateCampground, campgrounds.createCampground)
 
 router.route('/new')
     .get(isLoggedIn, campgrounds.renderNewForm)
 
 router.route('/:id')
     .get(campgrounds.showCampground)
-    .put(isLoggedIn, isAuthor, validateCampground, upload.array('image'), campgrounds.updateCampground)
+    .put(isLoggedIn, isAuthor, upload.array('image'), validateCampground, campgrounds.updateCampground)
     .delete(isLoggedIn, isAuthor, campgrounds.deleteCampground)
 
 router.route('/:id/edit')
